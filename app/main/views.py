@@ -2,7 +2,7 @@ from django.views.generic import TemplateView, DetailView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
-from .models import Category, Product
+from .models import Category, Product, Size
 from django.db.models import Q
 
 # Create your views here.
