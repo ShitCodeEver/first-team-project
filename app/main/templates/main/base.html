@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Моя страница{% endblock %}</title>
+</head>
+<body>
+    <header>
+        Шапка
+        <!-- Пример вывода категорий из вашего IndexView -->
+        <nav>
+            {% for cat in categories %}
+                <a href="#">{{ cat.name }}</a>
+            {% endfor %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <h1>Привет, мир!</h1>
+        <p>Это базовый текст, который изменится в дочерних шаблонах.</p>
+        {% endblock %}
+    </main>
+
+    <footer>Подвал</footer>
+</body>
+</html>
