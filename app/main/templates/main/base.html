@@ -1,10 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    
-{% block begin %}
+
 <head>
-    <title>Home</title>
+    <title>
+    {% block title %}
+        Главная
+    {% endblock title %}
+    </title>
+    {% block begin %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,9 +21,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static "deps/favicon/favicon-32x32.png" %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static "deps/favicon/favicon-16x16.png" %}">
     <link rel="manifest" href="{% static "deps/favicon/site.webmanifest" %}">
+    {% endblock begin %}
 </head>
 
-{% endblock begin %}
+
 
 <body>
     {% block menu %}
@@ -42,7 +47,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item  text-white" href="#">Доставка и оплата</a></li>
                                     <li><a class="dropdown-item  text-white" href="#">Контактная информация</a></li>
-                                    <li><a class="dropdown-item  text-white" href="#">Про нас</a></li>
+                                    <li><a class="dropdown-item  text-white" href="{% url 'main:about_page' %}" hx-get="{% url 'main:about_page' %}" hx-target="#main-content" hx-push-url="true">О нас</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -86,9 +91,9 @@
                                 height="16">
                         </button>
                         <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
-                            <li><a class="dropdown-item text-white" href="goods/catalog.html">Все товары</a></li>
+                            <li><a class="dropdown-item text-white" href="{% url 'main:catalog' %}">Все товары</a></li>
                             {% for a in categories %}
-                                <li><a class="dropdown-item text-white" href="goods/catalog.html">{{a}}</a></li>
+                                <li><a class="dropdown-item text-white" href="{% url 'main:catalog'%}">{{a.name}}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -157,7 +162,6 @@
                                                 <h4 class="float-left"><strong>100.00 $</strong></h4>
                                             </div>
                                         </div>
-                                    {%endblock basket%}
                                     <!-- Закончилась разметка корзины -->
                                 </div>
                                 <a class="btn btn-dark" href="orders/create_order.html">
@@ -167,6 +171,7 @@
                         </div>
                     </div>
                 </div>
+                {%endblock basket%}
                 <!-- Закончилась разметка модального окна -->
             </div>
         </div>
@@ -174,20 +179,24 @@
         <div class="container">
             <div class="row mt-1">
                 <div class="col-lg-2">
-                    {% block content %}
-                        <h3>что то</h3>
-                    {% endblock content %}
                 </div>
                 <div class="col-lg-10">
                     <!-- Контент на странице -->
-                    <h1 class="mt-5 pt-5"><strong>Магазин мебели HOME</strong></h1>
+                    <h1 class="mt-5 pt-5"><strong>
+                        {% block content %}
+                            <h1 class="mt-5 pt-5">Магазин мебели HOME<strong>
+                        {% endblock content %}
+
+                        {% block pagenation %}
+                        {% endblock pagenation %}
+                    </strong></h1>
                 </div>
             </div>
         </div>
     </section>
     <footer class="py-4 bg-dark">
         <div class="container">
-            <p class="m-0 text-center text-white">данный продукт в стадии отладки</p>
+            <p class="m-0 text-center text-white">вы нашли ошибку? расскажите об этом вашей маме!</p>
         </div>
     </footer>
     <script src="{% static "deps/js/jquery/jquery-3.7.0.min.js" %}"></script>

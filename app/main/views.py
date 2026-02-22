@@ -22,7 +22,7 @@ class IndexView(TemplateView): #посути метод получения да�
         return TemplateResponse(request, self.template_name, context) #выводим страницу, всегда
     
 class CatalogView(TemplateView):
-    template_name = 'main/base.html'
+    template_name = 'main/catalog.html'
     
     FILTER_MAPPING = { #короче это фильтер, лямбда нужна что бы проебашить все объекты
     'name': lambda queryset, value: queryset.filter(name__iexact=value), #предписка i-что-то, нужна для игнорирования реестра
@@ -102,3 +102,14 @@ class ProductDetailView(DetailView):
         if request.headers.get('HX-Request'): #если это HTMX запрос
             return TemplateResponse(request, 'main/home_content.html', context) #если да, то выводим блок
         return TemplateResponse(request, self.template_name, context) #выводим страницу, всегда
+    
+class AboutView(TemplateView): #посути блок, ыыы
+    template_name = 'main/about.html'  # Полная страница
+
+    def get(self, request, *args, **kwargs):
+        # Если прилетел запрос от HTMX (например, нажали на ссылку в меню)
+        if request.headers.get('HX-Request'):
+            # Отдаем ТОЛЬКО кусок с контентом
+            return TemplateResponse(request, 'main/about_content.html')
+        # Если юзер просто вбил адрес в строку или обновил страницу (F5)
+        return super().get(request, *args, **kwargs)
