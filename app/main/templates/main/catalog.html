@@ -3,26 +3,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-
-    {% block title%}
-        Каталог
-    {% endblock title%}
-
-    {% block begin %}
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{% static "deps/css/bootstrap/bootstrap.min.css" %}">
-        <link rel="stylesheet" href="{% static "deps/css/my_css.css" %}">
-        <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static "deps/favicon/apple-touch-icon.png" %}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static "deps/favicon/favicon-32x32.png" %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static "deps/favicon/favicon-16x16.png" %}">
-        <link rel="manifest" href="{% static "deps/favicon/site.webmanifest" %}">
-    {% endblock begin %}
-</head>
-
 <body>
     <section>
         <div class="container">
@@ -78,35 +58,44 @@
                             
                             <!-- Карта товара -->
                             {% block goods %}
-                                {% for a in Product%}
+                            <{% for obj in products %}
                                 <div class="col-lg-4 col-md-6 p-4">
-                                    <div class="card border-primary rounded custom-shadow">
-                                        <img src="../deps/images/goods/double bed.jpg" class="card-img-top" alt="...">
-                                        <div class="card-body">
-                                            <a href="#">
-                                                <p class="card-title">{{a.name}}</p>
+                                <div class="card border-primary rounded custom-shadow">
+                                    {% if obj.image %}
+                                    <img src="{{obj.image.url}}" class="card-img-top" alt="{{obj.name}}">
+                                    {% else %}
+                                    <img src="{% static "/deps/images/Not found image.png"%}" alt="Нет фото">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <a href="#">
+                                            <p class="card-title">{{ obj.name }}</p>
+                                        </a>
+                                        <p class="card-text text-truncate">{{obj.description}}.</p>
+                                        <p class="product_id">id:{{ obj.id }}</p>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="sizes">
+                                            {# 2. Исправили на obj и добавили _set (если не менял related_name) #}
+                                            {% for ps in obj.productsize.all %}
+                                                <span class="badge bg-info text-dark">
+                                                    {{ ps.size.name }}: {{ ps.price }} руб.
+                                                </span><br>
+                                            {% empty %}
+                                                <span class="text-muted">Размеры не указаны</span>
+                                            {% endfor %}
+                                        </div>
+                                            <!--<span class="badge bg-warning text-dark">Скидка 10.00 %</span>
+                                            <p><strong>100.00 $</strong></p> -->
+                                            <a href="#" class="btn">
+                                                <img class="mx-1" src="{% static "/deps/icons/cart-plus.svg" %}" alt="Catalog Icon"
+                                                    width="32" height="32">
                                             </a>
-                                            <p class="card-text text-truncate">{{a.description}}</p>
-                                            <p class="product_id">{{a.id}}</p>
-                                            <div class="d-flex justify-content-between">
-                                                <p><s>{{a.price}}</s> $</p>
-                                                <!--<p><strong></strong></p>
-                                                <span class="badge bg-warning text-dark">Скидка 10.00 %</span>-->
-                                                <!-- <p><strong>100.00 $</strong></p> -->
-                                                <a href="#" class="btn">
-                                                    {% if product.image %}
-                                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" alt="Catalog Icon" width="32" height="32">
-                                                    {% else %}
-                                                        <img src="/static/images/no-image.png" alt="Нет фото">
-                                                    {% endif %}
-                                                </a>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                {% endfor %}
+                            </div>
+                            {% endfor %}
                             {% endblock goods %}
-                    {% endblock content %}
+                    
                         <!-- Пагинация -->
                         {% block pagenation %}
                             <nav aria-label="Page navigation example">
@@ -128,6 +117,7 @@
                         
                     </div>
                 </div>
+                {% endblock content %}
             </div>
     </section>
 </body>

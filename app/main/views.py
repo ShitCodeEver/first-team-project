@@ -26,7 +26,8 @@ class CatalogView(TemplateView):
     
     FILTER_MAPPING = { #короче это фильтер, лямбда нужна что бы проебашить все объекты
     'name': lambda queryset, value: queryset.filter(name__iexact=value), #предписка i-что-то, нужна для игнорирования реестра
-    'price': lambda queryset, value: queryset.filter(price__gte=value),
+    #'price': lambda queryset, value: queryset.filter(price__gte=value),
+    'size': lambda queryset, value: queryset.filter(productsize__size__name__iexact=value).distinct(),
     'max_price': lambda queryset, value: queryset.filter(price__lte=value),
     'description': lambda queryset, value: queryset.filter(description__icontains=value),
     'desc_start': lambda queryset, value: queryset.filter(description__istartswith=value), #типо поиск по первому слову, ну удобно хули
@@ -36,7 +37,8 @@ class CatalogView(TemplateView):
         context = super().get_context_data(**kwargs)
         slug = kwargs.get('category_slug')
         current_category = None #выбраная категория типа
-        products = Product.objects.all()# Фильтруем по категории, сюда можно впихнуть фильтр по дате, но похуй
+        ##products = Product.objects.all()# Фильтруем по категории, сюда можно впихнуть фильтр по дате, но похуй
+        products = Product.objects.prefetch_related('productsize__size').all()
         categories = Category.objects.all() #берем все категории
         
         if slug:
@@ -46,7 +48,7 @@ class CatalogView(TemplateView):
         query = self.request.GET.get('q')
         if query:
             products = products.filter(
-                Q(name__icontains = query) | Q(description__incontains = query)
+                Q(name__icontains = query) | Q(description__icontains = query)
             )
         filter_params = {} #инициализируем словарь, что бы был
         for param, filter_func in self.FILTER_MAPPING.items():
@@ -94,7 +96,7 @@ class ProductDetailView(DetailView):
         context['related_product'] = Product.objects.filter(
             Category=product.category
         ).exclude(id=product.id)[:4]
-        context['current_category'] = product.category.slug
+        context['current_category'] = product.Category.slug
         return context
     
     def get(self, request, *args, **kwargs): #цель функции проверить, существует ли товар
