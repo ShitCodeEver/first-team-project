@@ -1,5 +1,5 @@
 body {
-  background-image: url("../images/bg-image.jpg");
+  background-image: url("../images/bgimage.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center center;
@@ -16,7 +16,7 @@ body {
 }
 
 .product_id {
-  color: gray;
+  color: rgb(128, 128, 128);
   font-size: 15px;
 }
 
@@ -35,4 +35,16 @@ body {
   top: 80%;
   border-radius: 15px;
   font-size: 0.7rem;
+}
+
+.size {
+  position: absolute;
+  top: 84%;
+  right: 40%;
+}
+
+.size1 {
+  position: absolute;
+  top: 84%;
+  right: 66%;
 }

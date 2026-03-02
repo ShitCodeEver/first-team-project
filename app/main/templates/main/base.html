@@ -8,12 +8,11 @@
         Главная
     {% endblock title %}
     </title>
-    {% block begin %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static "deps/css/bootstrap/bootstrap.min.css" %}">
-    <link rel="stylesheet" href="{% static "deps/css/my_css.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/bg.css" %}">
     <!-- Стиль footer-a для главной страницы -->
     <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
     <!-- Favicons for different platforms -->
@@ -21,13 +20,11 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static "deps/favicon/favicon-32x32.png" %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static "deps/favicon/favicon-16x16.png" %}">
     <link rel="manifest" href="{% static "deps/favicon/site.webmanifest" %}">
-    {% endblock begin %}
 </head>
 
 
 
 <body>
-    {% block menu %}
         <header>
             <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
                 <div class="container">
@@ -76,13 +73,11 @@
                 </div>
             </nav>
         </header>
-    {% endblock menu %}
     <section>
         <div class="container">
             <!-- Каталог и корзина с фиксированным расположением на странице -->
             <div class="row mt-1 position-fixed z-3">
                 <!-- Каталог -->
-                {% block listgategories%}
                     <div class="dropdown mb-2">
                         <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -91,15 +86,20 @@
                                 height="16">
                         </button>
                         <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
-                            <li><a class="dropdown-item text-white" href="{% url 'main:catalog' %}">Все товары</a></li>
-                            {% for a in categories %}
-                                <li><a class="dropdown-item text-white" href="{% url 'main:catalog'%}">{{a.name}}</a></li>
+                            {% for category in categories %}
+                                <li>
+                                    <a class="dropdown-item text-white" 
+                                    href="{% url 'main:catalog' category.slug %}"
+                                    hx-get="{% url 'main:catalog' category.slug %}" 
+                                    hx-target="#main-content" 
+                                    hx-push-url="true">
+                                    {{ category.name|upper }}
+                                    </a>
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
-                {% endblock listgategories%}
                 <!-- Значек корзины, вызывает модальное окно -->
-                {%block basket%}
                     <div>
                         <button type="button" class="btn btn-dark btn-secondary d-flex" id="modalButton"
                             aria-expanded="false">
@@ -171,7 +171,6 @@
                         </div>
                     </div>
                 </div>
-                {%endblock basket%}
                 <!-- Закончилась разметка модального окна -->
             </div>
         </div>
@@ -186,9 +185,6 @@
                         {% block content %}
                             <h1 class="mt-5 pt-5">Магазин мебели HOME<strong>
                         {% endblock content %}
-
-                        {% block pagenation %}
-                        {% endblock pagenation %}
                     </strong></h1>
                 </div>
             </div>

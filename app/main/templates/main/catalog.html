@@ -58,24 +58,36 @@
                             
                             <!-- Карта товара -->
                             {% block goods %}
-                            <{% for obj in products %}
+                            {% if products %}
+                            <{% for product in products %}
                                 <div class="col-lg-4 col-md-6 p-4">
                                 <div class="card border-primary rounded custom-shadow">
-                                    {% if obj.image %}
-                                    <img src="{{obj.image.url}}" class="card-img-top" alt="{{obj.name}}">
+                                    {% if product.image %}
+                                    <img src="{{product.image.url}}" class="card-img-top" alt="{{product.name}}">
                                     {% else %}
                                     <img src="{% static "/deps/images/Not found image.png"%}" alt="Нет фото">
                                     {% endif %}
                                     <div class="card-body">
-                                        <a href="#">
+                                        <div class="product-card group cursor-pointer" 
+                                        hx-get="{% url 'main:product' product.category.slug product.slug %}"
+                                        hx-target="#main-content"
+                                        hx-push-url="true">
+                                        <div class="aspect-square overflow-hidden bg-gray-100 mb-4">
+                                            <a href = "{% url 'main:product' product.category.slug product.slug %}">
+                                                <p class="card-title text-blue-600 group-hover:underline">
+                                                    {{ product.name }}
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                        <!--<a href="#">
                                             <p class="card-title">{{ obj.name }}</p>
-                                        </a>
-                                        <p class="card-text text-truncate">{{obj.description}}.</p>
-                                        <p class="product_id">id:{{ obj.id }}</p>
+                                        </a>-->
+                                        <p class="card-text text-truncate">{{product.description}}.</p>
+                                        <p class="product_id">id:{{ product.id }}</p>
                                         <div class="d-flex justify-content-between">
                                             <div class="sizes">
-                                            {# 2. Исправили на obj и добавили _set (если не менял related_name) #}
-                                            {% for ps in obj.productsize.all %}
+                                            {% for ps in product.productsize.all %}
                                                 <span class="badge bg-info text-dark">
                                                     {{ ps.size.name }}: {{ ps.price }} руб.
                                                 </span><br>
@@ -83,8 +95,6 @@
                                                 <span class="text-muted">Размеры не указаны</span>
                                             {% endfor %}
                                         </div>
-                                            <!--<span class="badge bg-warning text-dark">Скидка 10.00 %</span>
-                                            <p><strong>100.00 $</strong></p> -->
                                             <a href="#" class="btn">
                                                 <img class="mx-1" src="{% static "/deps/icons/cart-plus.svg" %}" alt="Catalog Icon"
                                                     width="32" height="32">
@@ -94,26 +104,34 @@
                                 </div>
                             </div>
                             {% endfor %}
+
+                                <!-- Пагинация -->
+                            {% block pagenation %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center my-4">
+                                        <div class="custom-shadow d-flex">
+                                            <li class="page-item disabled">
+                                            <a class="page-link">Previous</a>
+                                            </li>
+                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item">
+                                            <a class="page-link" href="#">Next</a>
+                                            </li>
+                                        </div>
+                                    </ul>
+                                </nav>   
+                            {% endblock pagenation %}
+
+                            {% else %}
+                                <div class="my-5 pt-5 px-2 pb-2 bg-white custom-shadow rounded">
+                                    <h2 class="m-2"><strong>Ничего не найдено!</strong></h2>
+                                    <p class="m-2" style="font-size: 1.2rem;">товаров нет! иди нахуй!</p>
+                                </div>
+                            {% endif %}
+                            
                             {% endblock goods %}
-                    
-                        <!-- Пагинация -->
-                        {% block pagenation %}
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center my-4">
-                                    <div class="custom-shadow d-flex">
-                                        <li class="page-item disabled">
-                                        <a class="page-link">Previous</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                        </li>
-                                    </div>
-                                </ul>
-                            </nav>   
-                        {% endblock pagenation %}
                         
                     </div>
                 </div>
