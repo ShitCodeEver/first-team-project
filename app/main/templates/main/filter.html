@@ -1,0 +1,39 @@
+<div class="dropdown mb-2">
+    <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Фильтры
+    </button>
+
+    <form action="" method="get" class="dropdown-menu bg-dark" data-bs-theme="dark">
+        <div class="form-check text-white mx-3">
+            <!-- Сохраняем состояние чекбокса -->
+            <input class="form-check-input" type="checkbox" name="on_sale" id="flexCheckDefault" value="on" 
+                   {% if request.GET.on_sale %}checked{% endif %}>
+            <!-- Сохраняем поисковый запрос из контекста -->
+            <input type="hidden" name="q" value="{{ search_query }}">
+            
+            <label class="form-check-label" for="flexCheckDefault">Товары по акции</label>
+        </div>
+
+        <p class="text-white mx-3 mt-3">Сортировать:</p>
+        
+        <div class="form-check text-white mx-3">
+            <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault1" value="default" 
+                   {% if not request.GET.order_by or request.GET.order_by == 'default' %}checked{% endif %}>
+            <label class="form-check-label" for="flexRadioDefault1">По умолчанию</label>
+        </div>
+
+        <div class="form-check text-white mx-3">
+            <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault2" value="price"
+                   {% if request.GET.order_by == 'price' %}checked{% endif %}>
+            <label class="form-check-label" for="flexRadioDefault2">От дешевых к дорогим</label>
+        </div>
+
+        <div class="form-check text-white mx-3">
+            <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault3" value="-price"
+                   {% if request.GET.order_by == '-price' %}checked{% endif %}>
+            <label class="form-check-label" for="flexRadioDefault3">От дорогих к дешевым</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary mx-3 mt-3">Применить</button>
+    </form>
+</div>
