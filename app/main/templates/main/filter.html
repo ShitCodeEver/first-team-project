@@ -1,39 +1,60 @@
 <div class="dropdown mb-2">
-    <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Фильтры
+    <!-- Кнопка фильтров -->
+    <button class="btn btn-dark dropdown-toggle border-secondary" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+        <i class="bi bi-filter me-1"></i> Фильтры
     </button>
 
-    <form action="" method="get" class="dropdown-menu bg-dark" data-bs-theme="dark">
-        <div class="form-check text-white mx-3">
-            <!-- Сохраняем состояние чекбокса -->
-            <input class="form-check-input" type="checkbox" name="on_sale" id="flexCheckDefault" value="on" 
-                   {% if request.GET.on_sale %}checked{% endif %}>
-            <!-- Сохраняем поисковый запрос из контекста -->
-            <input type="hidden" name="q" value="{{ search_query }}">
-            
-            <label class="form-check-label" for="flexCheckDefault">Товары по акции</label>
-        </div>
-
-        <p class="text-white mx-3 mt-3">Сортировать:</p>
+    <form hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}" 
+          hx-target="#main-content" 
+          hx-push-url="true"
+          class="dropdown-menu bg-dark p-3 shadow-lg" 
+          data-bs-theme="dark"
+          style="min-width: 260px; border: 1px solid #444;">
         
-        <div class="form-check text-white mx-3">
-            <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault1" value="default" 
-                   {% if not request.GET.order_by or request.GET.order_by == 'default' %}checked{% endif %}>
-            <label class="form-check-label" for="flexRadioDefault1">По умолчанию</label>
+        <!-- Скрытый поиск для сохранения запроса -->
+        <input type="hidden" name="q" value="{{ search_query }}">
+
+        <!-- Фильтр по размеру (Работает: в FILTER_MAPPING прописан путь productsize__size__name) -->
+        <div class="mb-3">
+            <label class="form-label small text-secondary text-uppercase">Размер</label>
+            <select name="size" class="form-select form-select-sm bg-dark text-white border-secondary">
+                <option value="">Любой</option>
+                <!-- Собираем уникальные размеры из списка товаров в контексте -->
+                {% regroup products by productsize.all as size_list %}
+                {% for p in products %}
+                    {% for ps in p.productsize.all %}
+                        <option value="{{ ps.size.name }}" {% if filter_params.size == ps.size.name %}selected{% endif %}>
+                            {{ ps.size.name|upper }}
+                        </option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
         </div>
 
-        <div class="form-check text-white mx-3">
-            <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault2" value="price"
-                   {% if request.GET.order_by == 'price' %}checked{% endif %}>
-            <label class="form-check-label" for="flexRadioDefault2">От дешевых к дорогим</label>
+        <!-- Фильтр по части описания (Работает: ключ 'description' в FILTER_MAPPING) -->
+        <div class="mb-3">
+            <label class="form-label small text-secondary text-uppercase">Описание содержит</label>
+            <input type="text" name="description" value="{{ filter_params.description }}" 
+                   placeholder="Напр: острая" class="form-control form-control-sm bg-dark text-white border-secondary">
         </div>
 
-        <div class="form-check text-white mx-3">
-            <input class="form-check-input" type="radio" name="order_by" id="flexRadioDefault3" value="-price"
-                   {% if request.GET.order_by == '-price' %}checked{% endif %}>
-            <label class="form-check-label" for="flexRadioDefault3">От дорогих к дешевым</label>
+        <!-- 
+            ВНИМАНИЕ: Поля ниже закомментированы, так как в вашем views.py 
+            прописаны фильтры по полю 'price', которого нет в модели Product.
+            Это вызывает "FieldError: Cannot resolve keyword 'price'".
+        -->
+        <!--
+        <div class="mb-3">
+            <label class="form-label small text-secondary text-uppercase">Макс. цена</label>
+            <input type="number" name="max_price" value="{{ filter_params.max_price }}" class="form-control form-control-sm">
         </div>
+        -->
 
-        <button type="submit" class="btn btn-primary mx-3 mt-3">Применить</button>
+        <div class="d-grid pt-2">
+            <button type="submit" class="btn btn-primary btn-sm">Применить</button>
+        </div>
     </form>
 </div>
+
+
+
