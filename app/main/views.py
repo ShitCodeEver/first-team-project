@@ -28,9 +28,10 @@ class CatalogView(TemplateView):
     FILTER_MAPPING = {
         'name': lambda queryset, value: queryset.filter(name__iexact=value),
         'size': lambda queryset, value: queryset.filter(productsize__size__name__iexact=value).distinct(),
-        'max_price': lambda queryset, value: queryset.filter(price__lte=value),
         'description': lambda queryset, value: queryset.filter(description__icontains=value),
         'desc_start': lambda queryset, value: queryset.filter(description__istartswith=value),
+        'min_price': lambda queryset, value: queryset.filter(productsize__price__gte=value).distinct(),
+        'max_price': lambda queryset, value: queryset.filter(productsize__price__lte=value).distinct(),
     }
     
     def get_context_data(self, **kwargs):
@@ -39,6 +40,7 @@ class CatalogView(TemplateView):
         
         products = Product.objects.select_related('category').prefetch_related('productsize__size').all()
         categories = Category.objects.all()
+        
         
         current_category_obj = None
         if slug:

@@ -1,0 +1,25 @@
+<form 
+    hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}" 
+    hx-target="#main-content" 
+    hx-push-url="true"
+    class="d-flex bg-dark p-2 shadow-lg" 
+    data-bs-theme="dark"
+    style="border: 1px solid #444; border-radius: 0.375rem;">
+
+    <!-- Скрытые поля фильтров, чтобы они не пропадали при нажатии "Поиск" -->
+    <input type="hidden" name="size" value="{{ filter_params.size }}">
+    <input type="hidden" name="description" value="{{ filter_params.description }}">
+
+    <!-- Поле поиска -->
+    <input 
+        class="form-control form-control-sm me-2 bg-dark text-white border-secondary" 
+        type="search" 
+        name="q" 
+        value="{{ search_query }}" 
+        placeholder="Поиск товаров..." 
+        aria-label="Search">
+
+    <button class="btn btn-outline-primary btn-sm" type="submit">
+        <i class="bi bi-search"></i>
+    </button>
+</form>
