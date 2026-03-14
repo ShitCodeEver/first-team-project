@@ -21,6 +21,7 @@ class Cart(models.Model):
     
     def add_product(self, product, product_size, quantity):
         # Исправлено имя метода и распаковка (created)
+        quantity = int(quantity)
         cart_item, created = CartItem.objects.get_or_create(
             cart=self,
             product=product,
@@ -33,6 +34,30 @@ class Cart(models.Model):
             cart_item.save()
             
         return cart_item
+    
+    def remove(self, item_id):
+        try:
+            item = self.items.get(id=item_id)
+            item.delete()
+            return True
+        except CartItem.DoesNotExist:
+            return False
+        
+    def update_item_quantity(self, quantity, item_id):
+        try:
+            item = self.items.get(id=item_id)
+            quantity = int(quantity) #на случай ошибок юлять
+            if quantity > 0:
+                item.quantity = quantity
+                item.save()
+            else:
+                item.delete()
+            return True
+        except (CartItem.DoesNotExist, ValueError ):
+            return False
+        
+    def clear(self):
+        self.items.all().delete()
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
@@ -45,8 +70,7 @@ class CartItem(models.Model):
         unique_together = (('cart', 'product', 'product_size'),) # Исправлен синтаксис
         
     def __str__(self):
-        # Убедитесь, что у Product есть поле name, а у ProductSize есть связь size с полем name
-        return f"{self.product.name} - {self.product_size.size.name} * {self.quantity}"
+        return f"{self.product.name} ({self.product_size.size.name}) x {self.quantity}"
     
     @property
     def total_price(self):
